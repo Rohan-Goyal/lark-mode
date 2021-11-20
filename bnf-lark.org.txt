@@ -1,0 +1,38 @@
+#+TITLE: BNF-Lark
+
+* Features
+Derived from either BNF or fundamental.
+Derived from BNF makes a lot of sense, but seems hard.
+** Highlighting
+*** Regexes
+Anything between a / and a / is a regex
+*** Terminating symbol definition DONE
+All in caps.
+*** Non-terminating symbol definition DONE
+Not in caps. All symbol defs end with a :.
+So regex to map between line beginning and colon, and color it.
+
+
+*** Special Keywords
+Any token that starts with a %.
+*** String
+Anything surrounded by ""
+*** Optional alias:
+Anything that follows a ->
+*** Quantifier
++, ?, *
+*** Or
+|
+*** Comments
+// or ;. Pick one
+
+** Syntax Table
+Define words, chars, etc.
+Start with default
+
+** Snippets
+
+** Indentation?
+
+** Reuse
+Starting with the BNF mode? Explicitly says unsuitable for other stuff.
