@@ -16,24 +16,24 @@
 ;;
 ;;
 ;;; Code:
-(defun lark-indent-line ()
-  "Indent a lark line."
-  (interactive)
-  (beginning-of-line)
-  ;; (message "Hello World")
-  (if (bobp)  ; Check for rule 1
-      (indent-line-to 0)
-    (let ((cur-indent 0))
-      (if (looking-at "|")
-          (progn
-            (save-excursion
-              (forward-line -1)
-              (beginning-of-line)
-              (if (looking-at lark-definition)
-                  (setq cur-indent (+ (current-indentation) 2))
-                                        ; NOTE: Ideally should indent to colon position. Fix that later
-                (setq cur-indent (current-indentation))))))
-      (indent-line-to cur-indent))))
+;; (defun lark-indent-line ()
+;;   "Indent a lark line."
+;;   (interactive)
+;;   (beginning-of-line)
+;;   ;; (message "Hello World")
+;;   (if (bobp)  ; Check for rule 1
+;;       (indent-line-to 0)
+;;     (let ((cur-indent 0))
+;;       (if (looking-at "|")
+;;           (progn
+;;             (save-excursion
+;;               (forward-line -1)
+;;               (beginning-of-line)
+;;               (if (looking-at lark-definition)
+;;                   (progn (setq cur-indent (+ (current-indentation) (search-forward ":")))(message (search-forward ":")))
+;;                                         ; NOTE: Ideally should indent to colon position. Fix that later
+;;                 (setq cur-indent (current-indentation))))))
+;;       (indent-line-to cur-indent))))
 ;; If a line starts with |, check line above.
 ;; If line above includes a definition (regex-checked), indent to after the first colon.
                                         ;
