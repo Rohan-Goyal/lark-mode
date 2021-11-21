@@ -16,32 +16,6 @@
 ;;
 ;;
 ;;; Code:
-;; (defun lark-indent-line ()
-;;   "Indent a lark line."
-;;   (interactive)
-;;   (beginning-of-line)
-;;   ;; (message "Hello World")
-;;   (if (bobp)  ; Check for rule 1
-;;       (indent-line-to 0)
-;;     (let ((cur-indent 0))
-;;       (if (looking-at "|")
-;;           (progn
-;;             (save-excursion
-;;               (forward-line -1)
-;;               (beginning-of-line)
-;;               (if (looking-at lark-definition)
-;;                   (progn (setq cur-indent (+ (current-indentation) (search-forward ":")))(message (search-forward ":")))
-;;                                         ; NOTE: Ideally should indent to colon position. Fix that later
-;;                 (setq cur-indent (current-indentation))))))
-;;       (indent-line-to cur-indent))))
-;; If a line starts with |, check line above.
-;; If line above includes a definition (regex-checked), indent to after the first colon.
-                                        ;
-;; Else, no indentation - start at first column.
-;;
-;; TODO
-
-
 (defvar lark-indent-line 'indent-relative)
 
 (defvar lark-mode-map)
@@ -62,17 +36,8 @@
 (defvar lark-terminal-name
   (lark-symbol-def upper))
 
-;; (defvar lark-definition
-  ;; (lark-symbol-def letter))
-
 (defvar lark-regex
   (rx "/" (+ nonl) "/" (* (any "imslux"))))
-
-;; (defvar lark-string ; FIXME?
-;;   (rx "\"" (* nonl) "\"" (? "i"))) ; i makes it case-insensitive
-
-;; (defvar lark-string
-;;   "\\(\"\\|'\\)[^\\1]+?\\1")
 
 (defvar lark-string
   (rx (seq (group (or "\"" "'")) (*\? (not (any "1\\"))) (backref 1))))
@@ -82,11 +47,6 @@
 
 (defvar lark-comment
   (rx bol (group "//") (group (* nonl)) line-end))
-
-; (defvar lark-builtin
-
-;   (regexp-opt '("%import" "%declare" "%override" "%ignore" "%extend")))
-
 
 (defvar lark-specialchar
   (rx (or "|" "+" "*" "?" "~")))
@@ -111,7 +71,6 @@
 (defvar lark-mode-syntax-table
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?_ "w" st)
-    ;; (modify-syntax-entry ?# "<" st)
     (modify-syntax-entry ?/ ". 12" st)
     (modify-syntax-entry ?\n ">" st)
    st))
@@ -121,7 +80,6 @@
   "Major mode for editing Python Lark EBNF notation"
   (setq font-lock-defaults '((lark-font-lock-words)))
   (setq comment-start "//")
-  ;; (setq comment-end "\n")
   (set-syntax-table lark-mode-syntax-table))
 
 
