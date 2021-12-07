@@ -1,0 +1,94 @@
+#+TITLE: Lark-Mode.el
+#+SUBTITLE: An Emacs mode to make it easier to work with Lark Grammar files.
+#+OPTIONS: num:nil toc:nil
+#+REVEAL_THEME: league
+
+* COMMENT Introduction
+** Why
+- Made the assignments easier.
+- Good practice with Regexes and Lisp.
+- Hopefully someone will find it useful some day.
+
+* Features
+** Syntax Highlighting
+#+begin_src elisp
+(,lark-regex . font-lock-constant-face)
+(,lark-string . font-lock-string-face)
+(,lark-builtin . font-lock-builtin-face)
+(,lark-specialchar . font-lock-keyword-face)
+#+end_src
+- Uses regexes to do a quick-and-dirty parsing, highlights terms accordingly using font-lock.
+- Identifies symbols and terminals, commands, strings, regexes etc.
+** Comments
+#+begin_src elisp
+(defvar lark-comment
+  (rx bol (group "//") (group (* nonl)) line-end))
+(setq comment-start "//")
+#+end_src
+- Identifies and greys out commented lines.
+- Allows us to comment out text using built-in Emacs functions like ~comment-region~.
+** ~rx~: Making regexes make sense
+- Elisp macro that lets you build regular expressions from scheme-style s-expressions.
+- A readable way to describe a regex.
+- Separates non-quoted symbols like ~?~ from strings like ~"?"~. Less reliant on backslashes.
+- Uses symbols like ~any~, ~or~, etc. rather than ~*~, ~+~.
+* Why it's Cool
+** Abstraction
+*** Modes
+#+begin_src elisp
+(define-derived-mode lark-mode bnf-mode "Lark Syntax"
+  "Major mode for editing Python Lark EBNF notation"
+  (setq font-lock-defaults '((lark-font-lock-words)))
+  (setq comment-start "//")
+  (set-syntax-table lark-mode-syntax-table))
+#+end_src
+- Emacs defines an interface for a language.
+- Major mode provides methods and variables like ~<name>-indent-line~.
+- When a mode is initialised, Emacs passes these to its internal processes.
+- ~define-derived-mode~ : Inherit and override behaviours of other modes.
+- Object-oriented system in all but name.
+*** Syntax Tables
+#+begin_src elisp
+(defvar lark-mode-syntax-table
+  (let ((st (make-syntax-table)))
+    (modify-syntax-entry ?_ "w" st)
+    (modify-syntax-entry ?/ ". 12" st)
+    (modify-syntax-entry ?\n ">" st)
+    st))
+#+end_src
+- Syntax Tables are a nice abstraction Emacs provides, which associate a character with syntactic meaning in a given context.
+- For instance, it identifies which characters can start/end comments, which count as punctuation, etc
+
+** Parsing
+#+begin_src elisp
+(defvar lark-regex
+  (rx "/" (+ nonl) "/" (* (any "imslux"))))
+#+end_src
+- Showcases a use-case for parsing languages, and an obviously useful one.
+- Even something as pedestrian as syntax highlighting requires some concept of the structure of a program - definitions, strings, aliases.
+** Meta/Self-Reference
+- Uses something conceptually similar to EBNF to describe Lark, an EBNF grammar.
+- Intriguing idea here is that since  EBNF is a language to describe other languages, EBNF can also parse and describe /itself/.
+- So this represents (a limited version of) a formal grammar that describes a formal grammar.
+
+** DSLs and General-Purpose Languages
+- ~rx~ is a DSL. But because it's implemented in Elisp, you can build macros, pass in variables, and do all the things you normally do to Lisp expressions.
+- Since ~rx~ is a macro, you can build dynamic expressions using it.
+- Really nice example of how the complex things we learn about in class actually make it easier to do things once you understand them.
+
+** Quoting and Evaluation
+#+begin_src elisp
+(defmacro lark-symbol-def (charclass)
+  "Abstraction for terminals/rules, match against CHARCLASS."
+  `(rx bol
+       (group (? "?"))
+       (group (+ (any ,charclass digit "_")))
+       (group ":")))
+#+end_src
+- Matches a string with an optional ~?~ followed by anything matching the regex ~charclass~ followed by a ~:~. We can define ~charclass~ as a regex, or as another ~rx~ expression.
+- Lisp lets you do this in three lines with a macro.
+- In other languages you'd need to wrap your regex in a template string and pepper your code with demented amounts of backslashes.
+
+* Conclusion
+- Thanks for listening!
+- [[github:Rohan-Goyal/lark-mode][Source Code on Github]]
