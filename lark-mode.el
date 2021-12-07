@@ -11,17 +11,18 @@
 ;;
 ;; This file is not part of GNU Emacs.
 ;;; Commentary:
-;;      A little hackish. Handles syntax highlighting, comments
+;;      A little hackish, but it handles syntax highlighting and comments fairly well.
 ;;
 ;;
 ;;
 ;;; Code:
-(defvar lark-indent-line 'indent-relative)
+(defvar lark-indent-line 'indent-relative) ;; Works well, honestly
 
-(defvar lark-mode-map)
+(defvar lark-mode-map)                  ;; If we want to add keybindings later, we can.
 
 (defmacro lark-symbol-def (charclass)
-  "Abstraction for terminals and rules, match against CHARCLASS."
+  "Abstraction for terminals and rules, match against CHARCLASS.
+        Match symbol and syntax characters separately."
   `(rx bol
        (group (? "?"))
        (group (+ (any ,charclass digit "_")))
@@ -57,10 +58,10 @@
 ;; Regexes work, verified using highlight in lab12.lark
 
 (defconst lark-font-lock-words
+;; Symbol definition name.
+;;Treat the symbol itself, the optional ?, and the required : differently
   `(
     (,lark-definition (1 font-lock-keyword-face) (2 font-lock-type-face) (3 font-lock-keyword-face))
-                                        ; Symbol definition name.
-                                        ; Treat the symbol itself, the optional ?, and the required : differently
     (,lark-regex . font-lock-constant-face)
     (,lark-string . font-lock-string-face)
     (,lark-builtin . font-lock-builtin-face)
@@ -73,7 +74,7 @@
     (modify-syntax-entry ?_ "w" st)
     (modify-syntax-entry ?/ ". 12" st)
     (modify-syntax-entry ?\n ">" st)
-   st))
+    st))
 
 ;;;###autoload
 (define-derived-mode lark-mode bnf-mode "Lark Syntax"
